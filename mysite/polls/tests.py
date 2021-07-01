@@ -96,6 +96,7 @@ class QuestionDetailViewTests(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
+
 class QuestionModelTests(TestCase):
 
     def test_was_published_recently_with_future_question(self):

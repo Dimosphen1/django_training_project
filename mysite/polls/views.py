@@ -26,10 +26,16 @@ class DetailView(generic.DetailView):
         """
         return Question.objects.filter(pub_date__lte=timezone.now())
 
+
 class ResultsView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
 
+    def get_queryset(self):
+        """
+        Displays results of polls that are already published.
+        """
+        return Question.objects.filter(pub_date__lte=timezone.now())
 
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
