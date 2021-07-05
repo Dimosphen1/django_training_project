@@ -3,6 +3,8 @@ import datetime
 from django.test import TestCase
 from django.utils import timezone
 from django.urls import reverse
+from django.contrib.auth.models import User
+from django.test.client import Client
 
 from .models import Question, Choice
 
@@ -40,8 +42,8 @@ class QuestionIndexViewTests(TestCase):
         index page.
         """
         question = create_question(question_text="Past question.", days=-30)
-        choice1 = create_choice(question, "Choice 1")
-        choice2 = create_choice(question, "Choice 2")
+        create_choice(question, "Choice 1")
+        create_choice(question, "Choice 2")
         response = self.client.get(reverse('polls:index'))
         self.assertQuerysetEqual(
             response.context['latest_question_list'],
@@ -54,8 +56,8 @@ class QuestionIndexViewTests(TestCase):
         the index page.
         """
         question = create_question(question_text="Future question.", days=30)
-        choice1 = create_choice(question, "Choice 1")
-        choice2 = create_choice(question, "Choice 2")
+        create_choice(question, "Choice 1")
+        create_choice(question, "Choice 2")
         response = self.client.get(reverse('polls:index'))
         self.assertContains(response, "No polls are available.")
         self.assertQuerysetEqual(response.context['latest_question_list'], [])
@@ -66,11 +68,11 @@ class QuestionIndexViewTests(TestCase):
         are displayed.
         """
         past_question = create_question(question_text="Past question.", days=-30)
-        choice1 = create_choice(past_question, "Choice 1")
-        choice2 = create_choice(past_question, "Choice 2")
+        create_choice(past_question, "Choice 1")
+        create_choice(past_question, "Choice 2")
         future_question = create_question(question_text="Future question.", days=30)
-        choice3 = create_choice(future_question, "Choice 3")
-        choice4 = create_choice(future_question, "Choice 4")
+        create_choice(future_question, "Choice 3")
+        create_choice(future_question, "Choice 4")
         response = self.client.get(reverse('polls:index'))
         self.assertQuerysetEqual(
             response.context['latest_question_list'],
@@ -82,11 +84,11 @@ class QuestionIndexViewTests(TestCase):
         The questions index page may display multiple questions.
         """
         past_question_1 = create_question(question_text="Past question 1.", days=-30)
-        choice1 = create_choice(past_question_1, "Choice 1")
-        choice2 = create_choice(past_question_1, "Choice 2")
+        create_choice(past_question_1, "Choice 1")
+        create_choice(past_question_1, "Choice 2")
         past_question_2 = create_question(question_text="Past question 2.", days=-5)
-        choice1 = create_choice(past_question_2, "Choice 1")
-        choice2 = create_choice(past_question_2, "Choice 2")
+        create_choice(past_question_2, "Choice 1")
+        create_choice(past_question_2, "Choice 2")
         response = self.client.get(reverse('polls:index'))
         self.assertQuerysetEqual(
             response.context['latest_question_list'],
@@ -97,7 +99,7 @@ class QuestionIndexViewTests(TestCase):
         """
         The questions index page should not include questions that don't have choices.
         """
-        question_without_choices = create_question("Question_without_choices", days=-5)
+        create_question("Question_without_choices", days=-5)
         response = self.client.get(reverse('polls:index'))
         self.assertQuerysetEqual(response.context['latest_question_list'], [])
 
@@ -106,8 +108,8 @@ class QuestionIndexViewTests(TestCase):
         The questions index page should include questions that have choices.
         """
         question_with_choices = create_question("Question_with_choices", days=-5)
-        choice1 = create_choice(question_with_choices, "Choice 1")
-        choice2 = create_choice(question_with_choices, "Choice 2")
+        create_choice(question_with_choices, "Choice 1")
+        create_choice(question_with_choices, "Choice 2")
         response = self.client.get(reverse('polls:index'))
         self.assertQuerysetEqual(response.context['latest_question_list'], [question_with_choices])
 
@@ -116,9 +118,9 @@ class QuestionIndexViewTests(TestCase):
         The questions index page should include only questions that have choices.
         """
         question_with_choices = create_question("Question_with_choices", days=-5)
-        choice1 = create_choice(question_with_choices, "Choice 1")
-        choice2 = create_choice(question_with_choices, "Choice 2")
-        question_without_choices = create_question("Question_without_choices", days=-5)
+        create_choice(question_with_choices, "Choice 1")
+        create_choice(question_with_choices, "Choice 2")
+        create_question("Question_without_choices", days=-5)
         response = self.client.get(reverse('polls:index'))
         self.assertQuerysetEqual(response.context['latest_question_list'], [question_with_choices])
 
@@ -127,11 +129,11 @@ class QuestionIndexViewTests(TestCase):
         The questions index page should include all questions that have choices.
         """
         question_with_choices_1 = create_question("Question_with_choices_1", days=-5)
-        choice1 = create_choice(question_with_choices_1, "Choice 1")
-        choice2 = create_choice(question_with_choices_1, "Choice 2")
+        create_choice(question_with_choices_1, "Choice 1")
+        create_choice(question_with_choices_1, "Choice 2")
         question_with_choices_2 = create_question("Question_with_choices_2", days=-30)
-        choice3 = create_choice(question_with_choices_2, "Choice 3")
-        choice4 = create_choice(question_with_choices_2, "Choice 4")
+        create_choice(question_with_choices_2, "Choice 3")
+        create_choice(question_with_choices_2, "Choice 4")
         response = self.client.get(reverse('polls:index'))
         self.assertQuerysetEqual(
             response.context['latest_question_list'],

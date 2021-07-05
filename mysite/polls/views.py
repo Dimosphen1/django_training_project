@@ -24,6 +24,8 @@ class DetailView(generic.DetailView):
         """
         Excludes any questions that aren't published yet.
         """
+        if self.request.user.is_superuser:
+            return Question.objects.all()
         return Question.objects.filter(pub_date__lte=timezone.now())
 
 
@@ -35,6 +37,8 @@ class ResultsView(generic.DetailView):
         """
         Displays results of polls that are already published.
         """
+        if self.request.user.is_superuser:
+            return Question.objects.all()
         return Question.objects.filter(pub_date__lte=timezone.now())
 
 
